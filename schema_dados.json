@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Ferre1ra10/schema-dados-branchs/schema_dados.json",
+  "title": "Payload de vendas",
+  "description": "Schema inicial da API de registros de vendas.",
+  "type": "object",
+  "required": ["nome_squad", "versao_api", "data_coleta", "registros_vendas"],
+  "properties": {
+    "nome_squad": {
+      "type": "string",
+      "description": "Squad responsável pela coleta."
+    },
+    "versao_api": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "Versão da API no formato MAJOR.MINOR."
+    },
+    "data_coleta": {
+      "type": "string",
+      "format": "date",
+      "description": "Data da extração (AAAA-MM-DD)."
+    },
+    "registros_vendas": {
+      "type": "array",
+      "description": "Transações coletadas no período.",
+      "items": { "$ref": "#/$defs/registro_venda" }
+    }
+  },
+  "$defs": {
+    "registro_venda": {
+      "type": "object",
+      "required": [
+        "id_transacao",
+        "cliente",
+        "valor_total",
+        "status_qualidade",
+        "campos_nulos"
+      ],
+      "properties": {
+        "id_transacao": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Identificador único da transação."
+        },
+        "cliente": {
+          "type": ["string", "null"],
+          "description": "Razão social do cliente. Nulo em registro incompleto."
+        },
+        "valor_total": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Valor bruto da transação."
+        },
+        "status_qualidade": {
+          "type": "string",
+          "enum": ["VALIDO", "ATENCAO", "INVALIDO"],
+          "description": "Resultado da validação de qualidade do registro."
+        },
+        "campos_nulos": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Quantidade de campos nulos encontrados no registro."
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}
